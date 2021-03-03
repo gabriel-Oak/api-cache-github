@@ -1,0 +1,29 @@
+{
+  "name": "api-cache-github",
+  "version": "1.0.0",
+  "description": "a simple exemple of how to cache api requests",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gabriel-Oak/api-cache-github.git"
+  },
+  "keywords": [
+    "nodejs",
+    "api",
+    "cache",
+    "redis"
+  ],
+  "author": "Gabriel Oak",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gabriel-Oak/api-cache-github/issues"
+  },
+  "homepage": "https://github.com/gabriel-Oak/api-cache-github#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "ts-node": "^9.1.1"
+  }
+}
