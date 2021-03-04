@@ -1,5 +1,7 @@
 import chalk from 'chalk';
-import { Express } from 'express';
+import { Express, Router } from 'express';
+import { indexRoute } from './core/indexRoute';
+import { Debugger } from './types';
 
 export interface ServerParams {
   port: number;
@@ -9,11 +11,13 @@ export interface ServerParams {
 
 export default class Server {
   express: Express;
-  debug: (...args: any[]) => void;
+  debug: Debugger;
+  routes: Router[];
 
-  constructor(express: Express, debug: (...args: any[]) => void) {
+  constructor(express: Express, debug: Debugger, routes: Router[]) {
     this.debug = debug;
     this.express = express;
+    this.routes = routes;
   }
 
   start({ port, json, cors }: ServerParams) {
@@ -22,8 +26,15 @@ export default class Server {
     this.express.use(json());
     this.express.use(cors());
 
+    this.configRoutes();
+
     this.express.listen(port, () => {
       this.debug(chalk.blue(`Server is runnign at port: ${port}`));
     });
   };
+
+  private configRoutes() {
+    this.express.get('/', indexRoute);
+    this.routes.forEach((route) => this.express.use(route));
+  }
 }

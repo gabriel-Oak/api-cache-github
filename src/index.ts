@@ -3,11 +3,13 @@ import express, { json } from 'express';
 import Server from './server';
 import cors from 'cors';
 import chalk from 'chalk';
+import { Debugger } from './types';
+import routes from './core/routes';
 
 const { log } = console;
-const debug = (...args: any[]) => log('server: ', ...args);
+const debug: Debugger = (...args) => log('server: ', ...args);
 
-const server = new Server(express(), debug);
+const server = new Server(express(), debug, routes);
 
 try {
   server.start({

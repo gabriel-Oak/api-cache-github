@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/gabriel-Oak/api-cache-github#readme",
   "dependencies": {
+    "axios": "^0.21.1",
     "chakl": "^0.0.1-security",
     "chalk": "^3.0.0",
     "cors": "^2.8.5",
