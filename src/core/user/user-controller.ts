@@ -1,10 +1,7 @@
 import { AxiosInstance } from 'axios';
 import { Request, Response } from 'express';
-import {  User } from '../../types';
-
-type Params = { page: number, per_page: number };
-
- class UserController  {
+import { User } from '../../types';
+class UserController {
   private githubService: AxiosInstance;
 
   constructor(githubService: AxiosInstance) {
@@ -13,11 +10,12 @@ type Params = { page: number, per_page: number };
     this.list = this.list.bind(this);
   }
 
-  async list(req: Request<Params>, res: Response) {
-    const { page = 0, per_page = 10 } = req.params;
+  async list(req: Request, res: Response) {
+    const { since = 0, per_page = 10 } = req.query;
+
     try {
       const users: User[] = await this.githubService.get('/users', {
-        params: { page, per_page },
+        params: { since, per_page },
       });
       return res.json(users);
     } catch (error) {
