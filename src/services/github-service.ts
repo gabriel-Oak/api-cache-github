@@ -4,6 +4,11 @@ const githubService = axios.create({
   baseURL: 'https://api.github.com/'
 });
 
+githubService.interceptors.request.use((config) => {
+  config.headers.accept = 'application/vnd.github.v3+json';
+  return config;
+});
+
 githubService.interceptors.response.use(
   (response) => response.data,
   (error) => {

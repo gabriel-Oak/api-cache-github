@@ -12,7 +12,7 @@ export class RedisService {
     return value ? JSON.parse(value) : null;
   }
 
-  async set(key: string, value: object, expirationSeconds = 3600) {
+  async set(key: string, value: object, expirationSeconds = 60 * 60) {
     return this.redis.set(key, JSON.stringify(value), 'EX', expirationSeconds);
   }
 

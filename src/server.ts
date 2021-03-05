@@ -1,5 +1,6 @@
-import { Express, Router } from 'express';
+import { Express } from 'express';
 import { indexRoute } from './core/indexRoute';
+import { Route } from './types';
 import Debugger from './utils/debugger';
 
 export interface ServerParams {
@@ -13,7 +14,7 @@ export default class Server {
   debug;
   routes;
 
-  constructor(express: Express, debug: Debugger, routes: Router[]) {
+  constructor(express: Express, debug: Debugger, routes: Route[]) {
     this.debug = debug;
     this.express = express;
     this.routes = routes;
@@ -34,6 +35,6 @@ export default class Server {
 
   private configRoutes() {
     this.express.get('/', indexRoute);
-    this.routes.forEach((route) => this.express.use(route));
+    this.routes.forEach((route) => this.express.use(route.prefix, route.routes));
   }
 }

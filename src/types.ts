@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, Router } from "express";
 
 export type Debugger = (...args: any[]) => void;
 export type ControllerAction = (req: Request<any>, res: Response) => any;
@@ -30,4 +30,9 @@ export interface User {
   received_events_url: string;
   type: string;
   site_admin: boolean;
+}
+
+export type Route = {
+  prefix: string;
+  routes: Router;
 }
