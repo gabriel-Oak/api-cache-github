@@ -1,8 +1,9 @@
 import { AxiosInstance } from 'axios';
 import { Request, Response } from 'express';
-import { Controller, User } from '../../types';
+import { Controller } from '../../types';
 import querystring, { ParsedUrlQueryInput } from 'querystring';
 import { RedisService } from '../../services/redis-service';
+import { User } from './user-types';
 
 type Params = {
   username: string;

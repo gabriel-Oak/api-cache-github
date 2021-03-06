@@ -1,5 +1,4 @@
 import { Express } from 'express';
-import { indexRoute } from './core/indexRoute';
 import { Route } from './types';
 import Debugger from './utils/debugger';
 
@@ -34,7 +33,6 @@ export default class Server {
   };
 
   private configRoutes() {
-    this.express.get('/', indexRoute);
     this.routes.forEach((route) => this.express.use(route.prefix, route.routes));
   }
 }
