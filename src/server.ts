@@ -1,5 +1,5 @@
 import { Express, NextFunction, Request, Response } from 'express';
-import { Route } from './types';
+import { Route } from './utils/types';
 import Debugger from './utils/debugger';
 import 'express-async-errors';
 import Youch from 'youch';
