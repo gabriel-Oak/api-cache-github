@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import githubService from '../../services/github-service';
 import redisService from '../../services/redis-service';
-import { Route } from '../../types';
+import { Route } from '../../utils/types';
 import UserController from './user-controller';
 
 const userController = new UserController(githubService, redisService);

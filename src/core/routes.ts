@@ -1,7 +1,7 @@
 import userRoutes from './user/user-routes';
 import searchRoutes from './search/search-routes';
 import { Response, Request, Router } from 'express';
-import { Route } from '../types';
+import { Route } from '../utils/types';
 
 const indexRoute: Route = {
   prefix: '/',
