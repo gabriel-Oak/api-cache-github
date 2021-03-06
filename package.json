@@ -26,16 +26,18 @@
   },
   "homepage": "https://github.com/gabriel-Oak/api-cache-github#readme",
   "dependencies": {
+    "@sentry/node": "^6.2.1",
+    "@sentry/tracing": "^6.2.1",
     "axios": "^0.21.1",
     "chakl": "^0.0.1-security",
     "chalk": "^3.0.0",
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
     "ioredis": "^4.23.0",
     "querystring": "^0.2.1",
     "sucrase": "^3.17.1",
-    "dotenv": "^8.2.0",
     "youch": "^2.1.1"
   },
   "devDependencies": {

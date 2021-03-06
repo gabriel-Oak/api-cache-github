@@ -18,5 +18,5 @@ try {
     port: Number(process.env.PORT || 8000),
   });
 } catch (error) {
-  server.debug.error(error);
+  server.reportException(error);
 }

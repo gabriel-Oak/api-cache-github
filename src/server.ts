@@ -1,25 +1,42 @@
 import { Express, NextFunction, Request, Response } from 'express';
+import * as Sentry from '@sentry/node';
+import * as Tracing from "@sentry/tracing";
 import { Route } from './utils/types';
 import Debugger from './utils/debugger';
 import 'express-async-errors';
 import Youch from 'youch';
 import { HttpError } from './utils/errors';
 
+type ConfigFunction = () => any;
 export interface ServerParams {
   port: number;
-  json: () => any;
-  cors: () => any;
+  json: ConfigFunction;
+  cors: ConfigFunction;
 }
 
 export default class Server {
   express;
   debug;
-  routes;
+  private routes;
 
   constructor(express: Express, debug: Debugger, routes: Route[]) {
     this.debug = debug;
     this.express = express;
     this.routes = routes;
+
+    Sentry.init({
+      dsn: process.env.SENTRY_HOST,
+      integrations: [
+        new Sentry.Integrations.Http({ tracing: true }),
+        new Tracing.Integrations.Express({ app: this.express }),
+      ],
+      tracesSampleRate: 1.0,
+    });
+  }
+
+  reportException(error: Error) {
+    this.debug.error(error);
+    Sentry.captureException(error);
   }
 
   start({ port, json, cors }: ServerParams) {
@@ -27,8 +44,12 @@ export default class Server {
 
     this.express.use(json());
     this.express.use(cors());
+    this.express.use(Sentry.Handlers.requestHandler());
+    this.express.use(Sentry.Handlers.tracingHandler());
 
     this.configRoutes();
+
+    this.express.use(Sentry.Handlers.errorHandler());
     this.exceptionHandler();
 
     this.express.listen(port, () => {
@@ -47,12 +68,13 @@ export default class Server {
       res: Response,
       _next: NextFunction
     ) => {
-      this.debug.error(err);
+      this.reportException(err);
       const status = err.statusCode ? err.statusCode : 500;
       const error = err.statusCode || process.env.NODE_ENV === 'production'
         ? {
           message: err.message || 'Oops, estamos com algum problema interno :('
         } : (await new Youch(err, req).toJSON()).error;
+
 
       return res
         .status(status)

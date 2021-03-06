@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { HttpError } from '../utils/errors';
+import * as Sentry from '@sentry/node';
 
 const githubService = axios.create({
   baseURL: 'https://api.github.com/'
@@ -21,6 +22,7 @@ githubService.interceptors.response.use(
         : 'Parece que não conseguimos acessar o github',
     });
 
+    Sentry.captureException(err);
     return Promise.reject(err);
   },
 );
