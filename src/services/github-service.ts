@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { HttpError } from '../utils/errors';
 
 const githubService = axios.create({
   baseURL: 'https://api.github.com/'
@@ -13,16 +14,14 @@ githubService.interceptors.response.use(
   (response) => response.data,
   (error) => {
     const { response = {} } = error;
+    const err = new HttpError({
+      statusCode: response.status || 500,
+      message: response.status
+        ? response.data.message || 'Desculpe, tem algo dando errado com o github'
+        : 'Parece que não conseguimos acessar o github',
+    });
 
-    if (response.status >= 500) {
-      error.message = response.data.message || 'Erro desconhecido, contate o suporte!';
-    } else if (!response.status) {
-      error.message = 'Parece que um de nossos serviços está fora do ar.';
-    } else {
-      error.message = response.data.message;
-    }
-
-    return Promise.reject(error);
+    return Promise.reject(err);
   },
 );
 

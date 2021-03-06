@@ -22,18 +22,14 @@ class UserController implements Controller {
     this.findByName = this.findByName.bind(this);
   }
 
-  async findByName({ params : { username }}: Request<Params>, res: Response) {
-    try {
-      const cached = await this.redisService.get(`user:${username}`);
-      if (cached) return res.json(cached);
+  async findByName({ params: { username } }: Request<Params>, res: Response) {
+    const cached = await this.redisService.get(`user:${username}`);
+    if (cached) return res.json(cached);
 
-      const user: User = await this.githubService.get(`/users/${username}`);
-      this.redisService.set(`user:${username}`, user, 30);
+    const user: User = await this.githubService.get(`/users/${username}`);
+    this.redisService.set(`user:${username}`, user, 30);
 
-      return res.json(user);
-    } catch (error) {
-      return res.status(500).json(error);
-    }
+    return res.json(user);
   }
 
   async list(req: Request, res: Response) {
@@ -44,17 +40,13 @@ class UserController implements Controller {
 
     const queryParams = querystring.stringify(params);
 
-    try {
-      const cached = await this.redisService.get(`user:${queryParams}`);
-      if (cached) return res.json(cached);
+    const cached = await this.redisService.get(`user:${queryParams}`);
+    if (cached) return res.json(cached);
 
-      const users: User[] = await this.githubService.get('/users', { params });
-      this.redisService.set(`user:${queryParams}`, users, 60 * 10);
+    const users: User[] = await this.githubService.get('/users', { params });
+    this.redisService.set(`user:${queryParams}`, users, 60 * 10);
 
-      return res.json(users);
-    } catch (error) {
-      return res.status(500).json(error);
-    }
+    return res.json(users);
   }
 
   async repos(
@@ -70,20 +62,15 @@ class UserController implements Controller {
     } as unknown as ParsedUrlQueryInput;
     const queryParams = querystring.stringify(params);
 
-    try {
-      const cached = await this.redisService.get(`user:${username}:repos:${queryParams}`);
-      if (cached) return res.json(cached);
+    const cached = await this.redisService.get(`user:${username}:repos:${queryParams}`);
+    if (cached) return res.json(cached);
 
-      const repos = await this.githubService.get(`/users/${username}/repos`, {
-        params,
-      });
-      this.redisService.set(`user:${username}:repos:${queryParams}`, repos, 30);
+    const repos = await this.githubService.get(`/users/${username}/repos`, {
+      params,
+    });
+    this.redisService.set(`user:${username}:repos:${queryParams}`, repos, 30);
 
-      return res.json(repos);
-    } catch (error) {
-      return res.status(500).json(error);
-    }
-
+    return res.json(repos);
   }
 }
 

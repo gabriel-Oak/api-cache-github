@@ -10,6 +10,6 @@ const searchRoutes: Route = {
   routes: Router(),
 };
 
-searchRoutes.routes.get('/', searchController.searchUsers);
+searchRoutes.routes.get('/user', searchController.searchUsers);
 
 export default searchRoutes;

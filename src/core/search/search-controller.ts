@@ -11,7 +11,7 @@ export default class SearchController {
     this.searchUsers = this.searchUsers.bind(this);
   }
 
-  async searchUsers(req: Request, res: Response){
+  async searchUsers(req: Request, res: Response) {
     const params = {
       q: req.query.q || '',
       order: req.query.order || 'desc',
@@ -19,15 +19,11 @@ export default class SearchController {
       page: req.query.page || 1,
     };
 
-    try {
-      const results: SearchUserResults = await this.githubService.get(
-        '/search/users',
-        { params },
-      );
-      return res.json(results);
-    } catch (error) {
-      return res.status(500).json(error);
-    }
+    const results: SearchUserResults = await this.githubService.get(
+      '/search/users',
+      { params },
+    );
+    return res.json(results);
   }
 
 }
