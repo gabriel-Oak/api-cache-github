@@ -4,7 +4,7 @@ import Server from './server';
 import cors from 'cors';
 import routes from './core/routes';
 import Debugger from './utils/debugger';
-import swaggerDocument from '../swagger.json';
+import swaggerDocument from './swagger';
 import Swagger from './utils/swagger';
 
 const server = new Server(

@@ -3,7 +3,7 @@ import githubService from '../../services/github-service';
 import redisService from '../../services/redis-service';
 import { Route } from '../../utils/types';
 import UserController from './user-controller';
-import paths from './user-paths.json';
+import paths from './user-paths';
 
 const userController = new UserController(githubService, redisService);
 

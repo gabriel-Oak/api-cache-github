@@ -1,33 +1,20 @@
-[
+export default [
   {
-    "key": "/search/user",
+    "key": "/user",
     "value": {
       "get": {
-        "tags": ["Search", "User"],
-        "sumary": "Search for users paginated",
+        "tags": [
+          "User"
+        ],
+        "description": "Get users paginated",
         "parameters": [
           {
             "in": "query",
-            "name": "q",
-            "type": "string",
-            "required": true,
-            "description": "Query arguments"
-          },
-          {
-            "in": "query",
-            "name": "page",
-            "default": 1,
+            "name": "since",
+            "default": 0,
             "type": "integer",
             "required": false,
-            "description": "Current page"
-          },
-          {
-            "in": "query",
-            "name": "order",
-            "default": "desc",
-            "type": "string",
-            "required": false,
-            "description": "Ordenation"
+            "description": "Minimal user id"
           },
           {
             "in": "query",
@@ -56,4 +43,4 @@
       }
     }
   }
-]
+];

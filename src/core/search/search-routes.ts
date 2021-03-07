@@ -2,7 +2,7 @@ import { Router } from 'express';
 import githubService from '../../services/github-service';
 import { Route } from '../../utils/types';
 import SearchController from './search-controller';
-import paths from './search-paths.json';
+import paths from './search-paths';
 
 const searchController = new SearchController(githubService);
 
