@@ -44,7 +44,7 @@ export default [
     }
   },
   {
-    key: "/user/:{username}",
+    key: "/user/{username}",
     value: {
       get: {
         tags: [
