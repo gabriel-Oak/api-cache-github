@@ -6,6 +6,7 @@ import Debugger from './utils/debugger';
 import 'express-async-errors';
 import Youch from 'youch';
 import { HttpError } from './utils/errors';
+import Swagger from './utils/swagger';
 
 type ConfigFunction = () => any;
 export interface ServerParams {
@@ -18,11 +19,15 @@ export default class Server {
   express;
   debug;
   private routes;
+  private swagger;
 
-  constructor(express: Express, debug: Debugger, routes: Route[]) {
+  constructor(
+    express: Express, debug: Debugger, routes: Route[], swagger: Swagger,
+  ) {
     this.debug = debug;
     this.express = express;
     this.routes = routes;
+    this.swagger = swagger;
 
     Sentry.init({
       dsn: process.env.SENTRY_HOST,
@@ -46,9 +51,9 @@ export default class Server {
     this.express.use(cors());
     this.express.use(Sentry.Handlers.requestHandler());
     this.express.use(Sentry.Handlers.tracingHandler());
+    this.swagger.init(this.express);
 
     this.configRoutes();
-
     this.express.use(Sentry.Handlers.errorHandler());
     this.exceptionHandler();
 

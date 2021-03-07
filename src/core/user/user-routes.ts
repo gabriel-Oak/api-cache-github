@@ -3,12 +3,15 @@ import githubService from '../../services/github-service';
 import redisService from '../../services/redis-service';
 import { Route } from '../../utils/types';
 import UserController from './user-controller';
+import paths from './user-paths.json';
 
 const userController = new UserController(githubService, redisService);
 
 const userRoutes: Route = {
   prefix: '/user',
   routes: Router(),
+  tag: 'User',
+  paths,
 };
 
 userRoutes.routes.get('/:username/repos', userController.repos);

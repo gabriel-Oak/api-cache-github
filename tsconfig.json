@@ -5,6 +5,7 @@
       "sourceMap": true,
       "target": "es5",
       "outDir": "build",
+      "resolveJsonModule": true,
       "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
@@ -18,10 +19,11 @@
         ]
     },
     "include": [
-      "src/**/*"
+      "src/**/*",
+      "*.json"
     ],
     "exclude": [
       "node_modules",
       "**/*.spec.ts"
-    ]
+    ],
   }
