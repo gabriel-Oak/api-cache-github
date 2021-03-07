@@ -51,9 +51,9 @@ export default class Server {
     this.express.use(cors());
     this.express.use(Sentry.Handlers.requestHandler());
     this.express.use(Sentry.Handlers.tracingHandler());
-    this.swagger.init(this.express);
 
     this.configRoutes();
+    this.swagger.init(this.express);
     this.express.use(Sentry.Handlers.errorHandler());
     this.exceptionHandler();
 
