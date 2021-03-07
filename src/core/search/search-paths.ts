@@ -44,9 +44,20 @@ export default [
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/User"
+                  type: 'object',
+                  properties: {
+                    total_count: {
+                      type: 'integer'
+                    },
+                    incomplete_results: {
+                      type: 'boolean'
+                    },
+                    items: {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/User"
+                      }
+                    }
                   }
                 }
               }
