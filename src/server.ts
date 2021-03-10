@@ -7,6 +7,7 @@ import 'express-async-errors';
 import Youch from 'youch';
 import { HttpError } from './utils/errors';
 import Swagger from './utils/swagger';
+import exphbs from 'express-handlebars';
 
 type ConfigFunction = () => any;
 export interface ServerParams {
@@ -47,6 +48,8 @@ export default class Server {
   start({ port, json, cors }: ServerParams) {
     this.debug.log('Starting application');
 
+    this.configEngine();
+
     this.express.use(json());
     this.express.use(cors());
     this.express.use(Sentry.Handlers.requestHandler());
@@ -64,6 +67,16 @@ export default class Server {
 
   private configRoutes() {
     this.routes.forEach((route) => this.express.use(route.prefix, route.routes));
+  }
+
+  private configEngine() {
+    this.express.engine('hbs', exphbs({
+      defaultLayout: 'main',
+      extname: '.hbs',
+      layoutsDir: __dirname + '/views',
+    }));
+    this.express.set('view engine', 'hbs');
+    this.express.set('views', __dirname + '/views');
   }
 
   private exceptionHandler() {
