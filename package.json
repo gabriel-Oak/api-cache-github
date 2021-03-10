@@ -5,7 +5,8 @@
   "main": "build/index.js",
   "scripts": {
     "dev": "nodemon src/index.ts --ignore tests",
-    "build": "sucrase ./src -d build -t typescript,imports && cp ./src/views ./build/ -r",
+    "build": "sucrase ./src -d build -t typescript,imports",
+    "postbuid": "cp ./src/views ./build/ -r",
     "start": "node build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

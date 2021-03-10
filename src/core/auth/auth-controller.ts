@@ -27,25 +27,26 @@ export default class AuthController {
 
   async authorize(req: Request, res: Response) {
     const { code }: AuthorizeQueryParams = req.query;
-    const { access_token: token }: GithubOauth = await this.githubService.post(
-      'login/oauth/access_token', {
+    global.console.log(code);
+
+    const { access_token }: GithubOauth = await this.githubService.post(
+      'https://github.com/login/oauth/access_token', {
       code,
       client_id: process.env.GITHUB_CLIENT,
       client_secret: process.env.GITHUB_SECRET,
     });
 
-    return res.redirect(`/auth/success?token=${token}`);
+    return res.redirect(`/auth/success?token=${access_token}`);
   }
 
   async success(req: Request, res: Response) {
     const { token } = req.query;
-    global.console.log(token);
     const user: User  = await this.githubService.get('/user', {
       headers: {
         Authorization: 'token ' + token,
       }
     });
-    global.console.log(user);
-    res.render('success.hbs', { user });
+
+    res.render('success.hbs', { user, token });
   }
 }
