@@ -8,6 +8,7 @@ import Youch from 'youch';
 import { HttpError } from './utils/errors';
 import Swagger from './utils/swagger';
 import exphbs from 'express-handlebars';
+import path from 'path';
 
 type ConfigFunction = () => any;
 export interface ServerParams {
@@ -73,10 +74,10 @@ export default class Server {
     this.express.engine('hbs', exphbs({
       defaultLayout: 'main',
       extname: '.hbs',
-      layoutsDir: __dirname + '/views',
+      layoutsDir: path.join(__dirname, '/views'),
     }));
     this.express.set('view engine', 'hbs');
-    this.express.set('views', __dirname + '/views');
+    this.express.set('views', path.join(__dirname, '/views'));
   }
 
   private exceptionHandler() {
