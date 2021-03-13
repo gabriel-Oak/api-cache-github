@@ -55,17 +55,16 @@ export default class Server {
     Sentry.captureException(error);
   }
 
-  start({ port, json, cors }: StartParams) {
+  async start({ port, json, cors }: StartParams) {
     this.debug.log('Starting application');
 
+    await this.orm.start();
     this.configEngine();
 
     this.express.use(json());
     this.express.use(cors());
     this.express.use(Sentry.Handlers.requestHandler());
     this.express.use(Sentry.Handlers.tracingHandler());
-
-    this.orm.start();
 
     this.configRoutes();
     this.swagger.init(this.express);

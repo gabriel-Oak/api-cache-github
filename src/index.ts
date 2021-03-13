@@ -18,12 +18,10 @@ const server = new Server({
   routes,
 });
 
-try {
-  server.start({
-    cors,
-    json,
-    port: Number(process.env.PORT || 8000),
-  });
-} catch (error) {
+server.start({
+  cors,
+  json,
+  port: Number(process.env.PORT || 8000),
+}).catch((error) => {
   server.reportException(error);
-}
+});

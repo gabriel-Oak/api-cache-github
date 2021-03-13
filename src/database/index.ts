@@ -2,8 +2,6 @@ import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import Debugger from '../utils/debugger';
 import entities from './entities';
-import * as Sentry from '@sentry/node';
-
 export interface OrmOptions {
   debug: Debugger;
 }
@@ -33,7 +31,7 @@ export default class Orm {
       this.debug.log('pg connected');
     } catch (error) {
       this.debug.error(error);
-      Sentry.captureException(error);
+      throw error;
     }
   }
 }
