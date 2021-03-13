@@ -9,12 +9,21 @@ import { HttpError } from './utils/errors';
 import Swagger from './utils/swagger';
 import exphbs from 'express-handlebars';
 import path from 'path';
+import Orm from './database';
 
 type ConfigFunction = () => any;
-export interface ServerParams {
+export interface StartParams {
   port: number;
   json: ConfigFunction;
   cors: ConfigFunction;
+}
+
+export interface ServerParams {
+  express: Express;
+  debug: Debugger;
+  routes: Route[];
+  swagger: Swagger;
+  orm: Orm;
 }
 
 export default class Server {
@@ -22,14 +31,14 @@ export default class Server {
   debug;
   private routes;
   private swagger;
+  private orm;
 
-  constructor(
-    express: Express, debug: Debugger, routes: Route[], swagger: Swagger,
-  ) {
+  constructor({ express, debug, routes, swagger, orm }: ServerParams) {
     this.debug = debug;
     this.express = express;
     this.routes = routes;
     this.swagger = swagger;
+    this.orm = orm;
 
     Sentry.init({
       dsn: process.env.SENTRY_HOST,
@@ -46,7 +55,7 @@ export default class Server {
     Sentry.captureException(error);
   }
 
-  start({ port, json, cors }: ServerParams) {
+  start({ port, json, cors }: StartParams) {
     this.debug.log('Starting application');
 
     this.configEngine();
@@ -55,6 +64,8 @@ export default class Server {
     this.express.use(cors());
     this.express.use(Sentry.Handlers.requestHandler());
     this.express.use(Sentry.Handlers.tracingHandler());
+
+    this.orm.start();
 
     this.configRoutes();
     this.swagger.init(this.express);

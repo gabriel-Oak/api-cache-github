@@ -6,13 +6,17 @@ import routes from './core/routes';
 import Debugger from './utils/debugger';
 import swaggerDocument from './swagger';
 import Swagger from './utils/swagger';
+import Orm from './database';
 
-const server = new Server(
-  express(),
-  new Debugger('server'),
+const server = new Server({
+  express: express(),
+  debug: new Debugger('server'),
+  swagger: new Swagger(swaggerDocument, routes),
+  orm: new Orm({
+    debug: new Debugger('typeorm')
+  }),
   routes,
-  new Swagger(swaggerDocument, routes),
-);
+});
 
 try {
   server.start({
