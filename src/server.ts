@@ -10,6 +10,7 @@ import Swagger from './utils/swagger';
 import exphbs from 'express-handlebars';
 import path from 'path';
 import Orm from './database';
+import authMiddleware from './middlewares/auth-middleware';
 
 type ConfigFunction = () => any;
 export interface StartParams {
@@ -61,10 +62,7 @@ export default class Server {
     await this.orm.start();
     this.configEngine();
 
-    this.express.use(json());
-    this.express.use(cors());
-    this.express.use(Sentry.Handlers.requestHandler());
-    this.express.use(Sentry.Handlers.tracingHandler());
+    this.configMiddlewares(json, cors);
 
     this.configRoutes();
     this.swagger.init(this.express);
@@ -78,6 +76,14 @@ export default class Server {
 
   private configRoutes() {
     this.routes.forEach((route) => this.express.use(route.prefix, route.routes));
+  }
+
+  private configMiddlewares(json: ConfigFunction, cors: ConfigFunction) {
+    this.express.use(json());
+    this.express.use(cors());
+    this.express.use(Sentry.Handlers.requestHandler());
+    this.express.use(Sentry.Handlers.tracingHandler());
+    this.express.use('**/private/**', authMiddleware);
   }
 
   private configEngine() {

@@ -22,7 +22,7 @@ class UserController {
   }
 
   async findByName({ params: { username } }: Request<Params>, res: Response) {
-    const cached = await this.redisService.get(`user:${username}`);
+    const cached: User = await this.redisService.get(`user:${username}`);
     if (cached) return res.json(cached);
 
     const user: User = await this.githubService.get(`/users/${username}`);
@@ -39,7 +39,7 @@ class UserController {
 
     const queryParams = querystring.stringify(params);
 
-    const cached = await this.redisService.get(`user:${queryParams}`);
+    const cached: User[] = await this.redisService.get(`user:${queryParams}`);
     if (cached) return res.json(cached);
 
     const users: User[] = await this.githubService.get('/users', { params });
