@@ -71,6 +71,10 @@ class UserController {
 
     return res.json(repos);
   }
+
+  async insertCover(_req: Request, res: Response) {
+    res.json('teste');
+  }
 }
 
 export default UserController;
