@@ -8,4 +8,4 @@ BUT, it will be the base for a further app(wich is secret for now) =D
  - Create a .env file, such as .env.example
  - Fill it with the needed envs
  - run: npm install
- - run: npm run dev
+ - run: npm run dev 
