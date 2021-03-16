@@ -12,4 +12,11 @@ export class HttpError extends Error {
     this.message = message;
     this.statusCode = statusCode;
   }
+
+  toJSON(): ErrorParams {
+    return {
+      message: this.message,
+      statusCode: this.statusCode,
+    };
+  }
 }

@@ -1,6 +1,4 @@
 import axios from 'axios';
-import { HttpError } from '../utils/errors';
-import * as Sentry from '@sentry/node';
 
 const githubService = axios.create({
   baseURL: 'https://api.github.com/'
@@ -14,15 +12,15 @@ githubService.interceptors.request.use((config) => {
 githubService.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    const { response = {} } = error;
-    const err = new HttpError({
-      statusCode: response.status || 500,
-      message: response.status
-        ? response.data.message || 'Desculpe, tem algo dando errado com o github'
-        : 'Parece que não conseguimos acessar o github',
-    });
 
-    Sentry.captureException(err);
+    const { response = {} } = error;
+    const err = {
+      statusCode: response.status || 500,
+      message: response.data
+      ? response.data.message || 'Desculpe, tem algo dando errado com o github'
+      : 'Parece que não conseguimos acessar o github',
+    };
+
     return Promise.reject(err);
   },
 );

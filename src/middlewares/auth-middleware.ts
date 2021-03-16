@@ -15,14 +15,18 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
     req.headers.userLogin = cached.login;
     req.headers.userId = String(cached.id);
   } else {
-    const user: User = await githubService.get('/user', {
-      headers: {
-        Authorization: 'token ' + authorization,
-      }
-    });
-    req.headers.userLogin = user.login;
-    req.headers.userId = String(user.id);
-    redisService.set(`user:token:${authorization}`, user, 600);
+    try {
+      const user: User = await githubService.get('/user', {
+        headers: {
+          Authorization: 'token ' + authorization,
+        }
+      });
+      req.headers.userLogin = user.login;
+      req.headers.userId = String(user.id);
+      redisService.set(`user:token:${authorization}`, user, 600);
+    } catch (error) {
+      return res.status(error.statusCode).json(error);
+    }
   }
 
   return next();
