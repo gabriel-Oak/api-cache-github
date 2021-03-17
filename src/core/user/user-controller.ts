@@ -72,8 +72,10 @@ class UserController {
     return res.json(repos);
   }
 
-  async insertCover(_req: Request, res: Response) {
-    res.json('teste');
+  async insertCover(req: Request, res: Response) {
+    console.log(req.file);
+
+    res.json(req.file);
   }
 }
 
