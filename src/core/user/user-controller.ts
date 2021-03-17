@@ -1,8 +1,14 @@
+import fs from 'fs/promises';
 import { AxiosInstance } from 'axios';
 import { Request, Response } from 'express';
 import querystring, { ParsedUrlQueryInput } from 'querystring';
+import { ImgbbService } from '../../services/imgbb-service';
 import { RedisService } from '../../services/redis-service';
 import { User } from './user-types';
+import { captureException } from '@sentry/minimal';
+import CoverPhoto from '../../database/entities/cover-photo';
+import { ImgbbModel } from '../../utils/types';
+import { Orm } from '../../database';
 
 type Params = {
   username: string;
@@ -11,14 +17,24 @@ type Params = {
 class UserController {
   private githubService;
   private redisService;
+  private imgbbService;
+  private orm;
 
-  constructor(githubService: AxiosInstance, redisService: RedisService) {
+  constructor(
+    githubService: AxiosInstance,
+    redisService: RedisService,
+    imgbbService: ImgbbService,
+    orm: Orm,
+  ) {
     this.githubService = githubService;
     this.redisService = redisService;
+    this.imgbbService = imgbbService;
+    this.orm = orm;
 
     this.list = this.list.bind(this);
     this.repos = this.repos.bind(this);
     this.findByName = this.findByName.bind(this);
+    this.insertCover = this.insertCover.bind(this);
   }
 
   async findByName({ params: { username } }: Request<Params>, res: Response) {
@@ -26,8 +42,16 @@ class UserController {
     if (cached) return res.json(cached);
 
     const user: User = await this.githubService.get(`/users/${username}`);
-    this.redisService.set(`user:${username}`, user, 30);
 
+    if(user) {
+      const coverRepository = this.orm.connection.getRepository(CoverPhoto);
+      user.cover = await coverRepository.findOne({
+        where: { userId: user.id },
+        select: ['externalId', 'url', 'thumbUrl'],
+      });
+    }
+
+    this.redisService.set(`user:${username}`, user, 60 * 30);
     return res.json(user);
   }
 
@@ -73,9 +97,25 @@ class UserController {
   }
 
   async insertCover(req: Request, res: Response) {
-    console.log(req.file);
+    const { file, headers } = req;
+    const coverRepository = this.orm.connection.getRepository(CoverPhoto);
+    const image = await fs.readFile(file.path, { encoding: 'base64' });
 
-    res.json(req.file);
+    const { data }: { data: ImgbbModel } = await this.imgbbService.uploadFile({
+      image,
+      name: `${headers.userId}-cover`,
+    });
+
+    const cover = await coverRepository.save(new CoverPhoto({
+      deleteUrl: data.delete_url,
+      externalId: data.id,
+      thumbUrl: data.thumb.url,
+      url: data.url,
+      userId: Number(headers.userId)
+    }));
+
+    fs.unlink(file.path).catch(captureException);
+    return res.json(cover);
   }
 }
 

@@ -9,7 +9,7 @@ const fileFilter = (
 ) => {
   const allowedFormats = [
     'image/jpeg',
-    'image/pjpeg',
+    'image/jpg',
     'image/png',
   ];
   return allowedFormats.includes(file.mimetype)

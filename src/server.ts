@@ -9,7 +9,7 @@ import { HttpError } from './utils/errors';
 import Swagger from './utils/swagger';
 import exphbs from 'express-handlebars';
 import path from 'path';
-import Orm from './database';
+import { Orm } from './database';
 import authMiddleware from './middlewares/auth-middleware';
 
 type ConfigFunction = () => any;

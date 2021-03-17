@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const githubService = axios.create({
-  baseURL: 'https://api.github.com/'
+  baseURL: 'https://api.github.com'
 });
 
 githubService.interceptors.request.use((config) => {

@@ -1,12 +1,20 @@
 import { Router } from 'express';
-import processFile from  '../../middlewares/process-file';
+import orm from '../../database';
+import processFile from '../../middlewares/process-file';
 import githubService from '../../services/github-service';
+import imgbbService from '../../services/imgbb-service';
 import redisService from '../../services/redis-service';
 import { Route } from '../../utils/types';
 import UserController from './user-controller';
 import paths from './user-paths';
 
-const userController = new UserController(githubService, redisService);
+const userController = new UserController(
+  githubService,
+  redisService,
+  imgbbService,
+  orm,
+);
+
 const userRoutes: Route = {
   prefix: '/user',
   routes: Router(),

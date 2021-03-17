@@ -1,3 +1,5 @@
+import CoverPhoto from "../../database/entities/cover-photo";
+
 export interface User {
   login: string;
   id: number;
@@ -31,4 +33,5 @@ export interface User {
   following: number;
   created_at: string;
   updated_at: string;
+  cover?: CoverPhoto;
 }

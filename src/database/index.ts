@@ -1,13 +1,16 @@
 import 'reflect-metadata';
-import { createConnection } from 'typeorm';
+import { Connection, createConnection } from 'typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import Debugger from '../utils/debugger';
+import { HttpError } from '../utils/errors';
 import entities from './entities';
 export interface OrmOptions {
   debug: Debugger;
 }
 
-export default class Orm {
+export class Orm {
   debug;
+  private dbConection: Connection | null = null;
 
   constructor({ debug }: OrmOptions) {
     this.debug = debug;
@@ -16,7 +19,7 @@ export default class Orm {
   async start() {
     try {
       this.debug.log('starting pg connection');
-      await createConnection({
+      this.dbConection = await createConnection({
         type: 'postgres',
         host: process.env.PG_HOST,
         port: Number(process.env.PG_PORT),
@@ -26,6 +29,7 @@ export default class Orm {
         synchronize: true,
         logging: false,
         entities,
+        namingStrategy: new SnakeNamingStrategy(),
       });
 
       this.debug.log('pg connected');
@@ -34,4 +38,17 @@ export default class Orm {
       throw error;
     }
   }
+
+  get connection() {
+    if (this.dbConection) return this.dbConection;
+    else throw new HttpError({
+      message: 'Estamos desconectados da base',
+      statusCode: 500,
+    });
+  }
 }
+
+const orm = new Orm({
+  debug: new Debugger('typeorm')
+});
+export default orm;

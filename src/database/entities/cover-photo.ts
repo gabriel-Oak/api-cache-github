@@ -1,21 +1,31 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
+export interface CoverPhotoProps {
+  externalId: string;
+  userId: number;
+  url: string;
+  thumbUrl: string;
+  deleteUrl: string;
+}
 @Entity()
 export default class CoverPhoto {
-
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryColumn('integer')
+  userId!: number;
 
   @Column('text')
-  url: string;
+  externalId!: string;
 
-  @Column('integer')
-  userId: number;
+  @Column('text')
+  url!: string;
 
-  constructor(id: string, url: string, userId: number) {
-    this.id = id;
-    this.url = url;
-    this.userId = userId;
+  @Column('text')
+  thumbUrl!: string;
+
+  @Column('text')
+  deleteUrl!: string;
+
+  constructor(params: CoverPhotoProps | undefined) {
+    if (params) Object.assign(this, params);
   }
 
 }
