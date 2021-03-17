@@ -1,14 +1,13 @@
-import fs from 'fs/promises';
 import { AxiosInstance } from 'axios';
 import { Request, Response } from 'express';
 import querystring, { ParsedUrlQueryInput } from 'querystring';
 import { ImgbbService } from '../../services/imgbb-service';
 import { RedisService } from '../../services/redis-service';
 import { User } from './user-types';
-import { captureException } from '@sentry/minimal';
 import CoverPhoto from '../../database/entities/cover-photo';
 import { ImgbbModel } from '../../utils/types';
 import { Orm } from '../../database';
+import { insertCoverScope } from './user-scopes';
 
 type Params = {
   username: string;
@@ -43,7 +42,7 @@ class UserController {
 
     const user: User = await this.githubService.get(`/users/${username}`);
 
-    if(user) {
+    if (user) {
       const coverRepository = this.orm.connection.getRepository(CoverPhoto);
       user.cover = await coverRepository.findOne({
         where: { userId: user.id },
@@ -97,12 +96,13 @@ class UserController {
   }
 
   async insertCover(req: Request, res: Response) {
-    const { file, headers } = req;
+    const { headers, body } = req;
     const coverRepository = this.orm.connection.getRepository(CoverPhoto);
-    const image = await fs.readFile(file.path, { encoding: 'base64' });
+
+    insertCoverScope(body);
 
     const { data }: { data: ImgbbModel } = await this.imgbbService.uploadFile({
-      image,
+      image: body.cover.split('base64,')[1],
       name: `${headers.userId}-cover`,
     });
 
@@ -114,8 +114,7 @@ class UserController {
       userId: Number(headers.userId)
     }));
 
-    fs.unlink(file.path).catch(captureException);
-    return res.json(cover);
+    return res.json({ cover });
   }
 }
 

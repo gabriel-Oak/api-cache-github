@@ -93,18 +93,18 @@ export default [
             description: 'The github user token'
           },
           {
-            in: 'form-data',
+            in: 'body',
             name: 'cover',
             type: 'file',
             required: true,
-            description: 'Cover file'
+            description: 'Cover file, base64 string'
           }
         ],
         responses: {
           200: {
             description: 'OK',
             content: {
-              'multipart/form-data': {
+              'application/json': {
                 schema: {
                   type: 'object',
                   '$ref': '#/definitions/UserCover'

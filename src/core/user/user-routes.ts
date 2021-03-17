@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import orm from '../../database';
-import processFile from '../../middlewares/process-file';
 import githubService from '../../services/github-service';
 import imgbbService from '../../services/imgbb-service';
 import redisService from '../../services/redis-service';
@@ -26,6 +25,6 @@ const userRoutes: Route = {
 userRoutes.routes.get('/:username/repos', userController.repos);
 userRoutes.routes.get('/:username', userController.findByName);
 userRoutes.routes.get('/', userController.list);
-userRoutes.routes.post('/private/cover', processFile, userController.insertCover);
+userRoutes.routes.post('/private/cover', userController.insertCover);
 
 export default userRoutes;
