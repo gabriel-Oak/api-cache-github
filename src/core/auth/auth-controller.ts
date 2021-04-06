@@ -1,5 +1,6 @@
 import { AxiosInstance } from 'axios';
 import { Request, Response } from 'express';
+import { HttpError } from '../../utils/errors';
 import { User } from '../user/user-types';
 
 interface AuthorizeQueryParams {
@@ -37,6 +38,11 @@ export default class AuthController {
       client_secret: process.env.GITHUB_SECRET,
     });
 
+    if (!access_token && returnToken) throw new HttpError({
+      message: 'Codigo inválido ou expirado, tende novamente!',
+      statusCode: 400,
+    });
+    
     return returnToken
       ? res.json({ token: access_token })
       : res.redirect(`/auth/success?token=${access_token}`);
