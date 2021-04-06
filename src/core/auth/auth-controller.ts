@@ -29,7 +29,6 @@ export default class AuthController {
 
   async authorize(req: Request, res: Response) {
     const { code, returnToken }: AuthorizeQueryParams = req.query;
-    global.console.log(code);
 
     const { access_token }: GithubOauth = await this.githubService.post(
       'https://github.com/login/oauth/access_token', {
@@ -40,9 +39,9 @@ export default class AuthController {
 
     if (!access_token && returnToken) throw new HttpError({
       message: 'Codigo inválido ou expirado, tende novamente!',
-      statusCode: 400,
+      statusCode: 401,
     });
-    
+
     return returnToken
       ? res.json({ token: access_token })
       : res.redirect(`/auth/success?token=${access_token}`);
