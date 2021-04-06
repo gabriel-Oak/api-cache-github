@@ -4,6 +4,7 @@ import { User } from '../user/user-types';
 
 interface AuthorizeQueryParams {
   code?: string;
+  returnToken?: boolean;
 }
 
 interface GithubOauth {
@@ -26,7 +27,7 @@ export default class AuthController {
   }
 
   async authorize(req: Request, res: Response) {
-    const { code }: AuthorizeQueryParams = req.query;
+    const { code, returnToken }: AuthorizeQueryParams = req.query;
     global.console.log(code);
 
     const { access_token }: GithubOauth = await this.githubService.post(
@@ -36,12 +37,14 @@ export default class AuthController {
       client_secret: process.env.GITHUB_SECRET,
     });
 
-    return res.redirect(`/auth/success?token=${access_token}`);
+    return returnToken
+      ? res.json({ token: access_token })
+      : res.redirect(`/auth/success?token=${access_token}`);
   }
 
   async success(req: Request, res: Response) {
     const { token } = req.query;
-    const user: User  = await this.githubService.get('/user', {
+    const user: User = await this.githubService.get('/user', {
       headers: {
         Authorization: 'token ' + token,
       }
