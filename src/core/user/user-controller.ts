@@ -34,21 +34,16 @@ class UserController {
     this.repos = this.repos.bind(this);
     this.findByName = this.findByName.bind(this);
     this.insertCover = this.insertCover.bind(this);
+    this.getUserCover = this.getUserCover.bind(this);
+    this.getMe = this.getMe.bind(this);
   }
 
   async findByName({ params: { username } }: Request<Params>, res: Response) {
     const cached: User = await this.redisService.get(`user:${username}`);
     if (cached) return res.json(cached);
 
-    const user: User = await this.githubService.get(`/users/${username}`);
-
-    if (user) {
-      const coverRepository = this.orm.connection.getRepository(CoverPhoto);
-      user.cover = await coverRepository.findOne({
-        where: { userId: user.id },
-        select: ['externalId', 'url', 'thumbUrl'],
-      });
-    }
+    let user: User = await this.githubService.get(`/users/${username}`);
+    user = await this.getUserCover(user);
 
     this.redisService.set(`user:${username}`, user, 60 * 30);
     return res.json(user);
@@ -115,6 +110,41 @@ class UserController {
     }));
 
     return res.json({ cover });
+  }
+
+  async getMe(req: Request, res: Response) {
+    const { authorization } = req.headers;
+    if (!authorization) return res.status(401).json({
+      message: 'Token não encontrado, efetue login!'
+    });
+
+    const cached: User = await this.redisService.get(`user:token:${authorization}`);
+    if (cached) return res.json({ user: cached });
+
+    try {
+      let user: User = await this.githubService.get('/user', {
+        headers: {
+          Authorization: 'token ' + authorization,
+        }
+      });
+      user = await this.getUserCover(user);
+
+      this.redisService.set(`user:token:${authorization}`, user, 60 * 60 * 12);
+      return res.json();
+    } catch (error) {
+      return res.status(error.statusCode).json(error);
+    }
+  }
+
+  private async getUserCover(user: User) {
+    if (user) {
+      const coverRepository = this.orm.connection.getRepository(CoverPhoto);
+      user.cover = await coverRepository.findOne({
+        where: { userId: user.id },
+        select: ['externalId', 'url', 'thumbUrl'],
+      });
+    }
+    return user;
   }
 }
 

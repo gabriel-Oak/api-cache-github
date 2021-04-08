@@ -50,7 +50,7 @@ export default [
         tags: [
           'User'
         ],
-        description: 'Get users paginated',
+        description: 'Get user by github name',
         parameters: [
           {
             in: 'path',
@@ -58,6 +58,39 @@ export default [
             type: 'string',
             required: true,
             description: 'The github user name'
+          },
+        ],
+        responses: {
+          200: {
+            description: 'OK',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  '$ref': '#/definitions/User'
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    key: '/user/me',
+    value: {
+      get: {
+        tags: [
+          'User'
+        ],
+        description: 'Get user by it\'s token',
+        parameters: [
+          {
+            in: 'headers',
+            name: 'Authorization',
+            type: 'string',
+            required: true,
+            description: 'The github user token'
           },
         ],
         responses: {

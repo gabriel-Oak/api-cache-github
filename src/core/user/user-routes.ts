@@ -22,9 +22,10 @@ const userRoutes: Route = {
 };
 
 
+userRoutes.routes.post('/private/cover', userController.insertCover);
+userRoutes.routes.get('/me', userController.getMe);
 userRoutes.routes.get('/:username/repos', userController.repos);
 userRoutes.routes.get('/:username', userController.findByName);
 userRoutes.routes.get('/', userController.list);
-userRoutes.routes.post('/private/cover', userController.insertCover);
 
 export default userRoutes;
