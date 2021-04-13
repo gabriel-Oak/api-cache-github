@@ -13,7 +13,7 @@ type Params = {
   username: string;
 }
 
-class UserController {
+export default class UserController {
   private githubService;
   private redisService;
   private imgbbService;
@@ -147,5 +147,3 @@ class UserController {
     return user;
   }
 }
-
-export default UserController;
