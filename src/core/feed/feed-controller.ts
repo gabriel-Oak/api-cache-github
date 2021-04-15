@@ -13,6 +13,14 @@ export default class FeedController {
   }
 
   async getFeed(req: Request, res: Response) {
+    const { authorization } = req.headers;
 
+    const feed: any = await this.githubService.get('/feeds', {
+      headers: {
+        Authorization: 'token ' + authorization
+      }
+    });
+
+    return res.json(feed);
   }
 }

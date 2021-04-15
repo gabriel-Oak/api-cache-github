@@ -14,6 +14,6 @@ const feedRoutes: Route = {
 };
 
 
-feedRoutes.routes.post('/private/', feedController.getFeed);
+feedRoutes.routes.get('/private/', feedController.getFeed);
 
 export default feedRoutes;
